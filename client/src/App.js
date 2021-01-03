@@ -13,9 +13,6 @@ function App() {
   const saveNote = (config) => {
     fetch('http://localhost:8080/', {
       method: 'POST', // or 'PUT'
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(config),
     })
     .then(response => response.json())

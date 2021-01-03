@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/xbryan813x/goReact/fetchrecord"
+	"github.com/xbryan813x/goReact/notes"
 	"github.com/xbryan813x/goReact/websocket"
 )
 
@@ -22,6 +24,11 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	websocket.Reader(ws)
 }
 
+func updateStore(note notes.Note) {
+	notes.Store = append(notes.Store, note)
+	fmt.Println("Updating Store with note =>", notes.Store)
+}
+
 func setupRoutes() {
 	http.HandleFunc("/to-do-list", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "to-do-list")
@@ -29,10 +36,11 @@ func setupRoutes() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		enableCors(&w)
-		// body := fetchrecord.FetchRecord()
-		// fmt.Println("This is the body => \n", body)
 
 		switch r.Method {
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+			return
 		case "GET":
 			for k, v := range r.URL.Query() {
 				fmt.Printf("%s: %s\n", k, v)
@@ -44,15 +52,19 @@ func setupRoutes() {
 				log.Fatal(err)
 			}
 
-			// var note Note
+			var note notes.Note
 
 			error := json.Unmarshal([]byte(reqBody), &note)
 
 			if error != nil {
 				log.Fatal(error)
 			}
-			fmt.Printf("%s\n", reqBody)
-			fmt.Printf("%+v\n", note)
+			// fmt.Printf("%s\n", reqBody)
+			// fmt.Printf("%+v\n", note)
+			updateStore(note)
+			match := fetchrecord.FetchRecord(note)
+			fmt.Println("Sample Record => ")
+			fmt.Printf("%+v\n", match)
 			w.Write([]byte("Received a POST request\n"))
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
