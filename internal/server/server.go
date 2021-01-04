@@ -59,13 +59,24 @@ func setupRoutes() {
 			if error != nil {
 				log.Fatal(error)
 			}
-			// fmt.Printf("%s\n", reqBody)
-			// fmt.Printf("%+v\n", note)
 			updateStore(note)
 			match := fetchrecord.FetchRecord(note)
-			fmt.Println("Sample Record => ")
-			fmt.Printf("%+v\n", match)
-			w.Write([]byte("Received a POST request\n"))
+
+			if !match.IsEmpty() {
+				matchPointer := &match
+				response, err := json.Marshal(matchPointer)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				w.Write(response)
+				fmt.Println("Hoopla!!")
+			}
+			fmt.Println("Sample Record from cleanup => ")
+			fmt.Println(match)
+			// w.Write([]byte("Received a POST request\n"))
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 			w.Write([]byte(http.StatusText(http.StatusNotImplemented)))

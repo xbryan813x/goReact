@@ -5,6 +5,7 @@ function App() {
   const [name, setName] = useState("")
   const [age, setAge] = useState("")
   const [note, setNote] = useState("")
+  const [beResponse, setBeResponse] = useState({})
 
   useEffect(() => {
     connect();
@@ -14,10 +15,14 @@ function App() {
     fetch('http://localhost:8080/', {
       method: 'POST', // or 'PUT'
       body: JSON.stringify(config),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
     .then(response => response.json())
     .then(data => {
       console.log('Success:', data);
+      setBeResponse(data)
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -26,9 +31,9 @@ function App() {
   
   const send = () => {
     const configData = {
-      name: name,
-      age: age,
-      note: note
+      name,
+      age,
+      note
     }
     sendMsg(`hello`);
     saveNote(configData);
@@ -47,7 +52,9 @@ function App() {
         break;
       case 'note':
         setNote(element.target.value)
+        break;
         default:
+        setNote(element.target.value)
     }
   };
 
@@ -72,6 +79,9 @@ function App() {
             </p>
           )
         )}
+        <p>
+          {JSON.stringify(beResponse)}
+        </p>
       </div>
     </div>
   );

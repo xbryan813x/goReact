@@ -34,3 +34,8 @@ type Record struct {
 
 // A SearchRecord contains all data from request from client
 type SearchRecord Note
+
+// Empty determines if struct is empty
+func (r Record) IsEmpty() bool {
+	return (r.Name == "")
+}
