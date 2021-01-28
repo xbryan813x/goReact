@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/xbryan813x/goReact/fetchrecord"
 	"github.com/xbryan813x/goReact/notes"
 	"github.com/xbryan813x/goReact/websocket"
 )
@@ -59,24 +58,23 @@ func setupRoutes() {
 			if error != nil {
 				log.Fatal(error)
 			}
-			updateStore(note)
-			match := fetchrecord.FetchRecord(note)
+			// updateStore(note)
+			// match := fetchrecord.FetchRecord(note)
 
-			if !match.IsEmpty() {
-				matchPointer := &match
-				response, err := json.Marshal(matchPointer)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(http.StatusOK)
-				w.Write(response)
-				fmt.Println("Hoopla!!")
-			}
+			// if !match.IsEmpty() {
+			// 	matchPointer := &match
+			// 	response, err := json.Marshal(matchPointer)
+			// 	if err != nil {
+			// 		fmt.Println(err)
+			// 		return
+			// 	}
+			// 	w.Header().Set("Content-Type", "application/json")
+			// 	w.WriteHeader(http.StatusOK)
+			// 	w.Write(response)
+			// }
 			fmt.Println("Sample Record from cleanup => ")
-			fmt.Println(match)
-			// w.Write([]byte("Received a POST request\n"))
+			fmt.Println(note)
+			w.Write([]byte("Received a POST request\n"))
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 			w.Write([]byte(http.StatusText(http.StatusNotImplemented)))
@@ -95,6 +93,7 @@ func enableCors(w *http.ResponseWriter) {
 
 func main() {
 	fmt.Println("Distributed Chat App v0.01")
+	// dynamo.GetTableItem()
 	setupRoutes()
 	http.ListenAndServe(":8080", nil)
 }
